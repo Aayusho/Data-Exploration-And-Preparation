@@ -138,3 +138,27 @@ dim(df_clean)
 
 # Checking remaining missing values
 sum(is.na(df_clean))
+
+#Exploratory Data analysis
+library(ggplot2)
+
+#distribution of house prices
+ggplot(df_clean, aes(x = median_house_value)) +
+  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+  labs(
+    title = "Distribution of California House Prices",
+    x = "Median House Value ($)",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+#median income vs house prices
+ggplot(df_clean, aes(x = median_income,
+                     y = median_house_value)) +
+  geom_point(alpha = 0.3, color = "blue") +
+  labs(
+    title = "Median Income vs House Prices",
+    x = "Median Income (Tens of Thousands of Dollars)",
+    y = "Median House Value ($)"
+  ) +
+  theme_minimal()
