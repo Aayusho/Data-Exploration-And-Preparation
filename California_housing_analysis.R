@@ -272,3 +272,51 @@ plot(
   xlab = "PC1",
   ylab = "PC2"
 )
+
+#Calculating cumulative explained variance
+cumulative_variance <- cumsum(variance_percentage)
+
+print(cumulative_variance)
+which(cumulative_variance >= 80)[1]
+
+summary(pca_result)
+which(cumulative_variance >= 80)[1]
+
+#PCA Interpretation
+#Displaying PCA variable loadings
+print(round(pca_result$rotation[, 1:3], 3))
+
+#Identifying the strongest contributors to PC1
+pc1_loadings <- sort(
+  abs(pca_result$rotation[, 1]),
+  decreasing = TRUE
+)
+
+print(head(pc1_loadings, 5))
+
+#Identifying the strongest contributors to PC2
+pc2_loadings <- sort(
+  abs(pca_result$rotation[, 2]),
+  decreasing = TRUE
+)
+
+print(head(pc2_loadings, 5))
+
+#Final PCA Summary
+# Number of components explaining at least 80% variance
+components_needed <- which(cumulative_variance >= 80)[1]
+
+#Total variance retained
+variance_retained <- cumulative_variance[components_needed]
+
+#Displaying final results
+cat("Components retained:", components_needed, "\n")
+cat("Variance retained:", round(variance_retained, 2), "%\n")
+
+#Creating reduced PCA dataset
+df_pca <- as.data.frame(
+  pca_result$x[, 1:components_needed]
+)
+
+#Checking reduced dataset dimensions
+dim(df_pca)
