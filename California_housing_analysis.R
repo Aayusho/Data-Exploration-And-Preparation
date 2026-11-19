@@ -203,3 +203,72 @@ ggplot(cor_data, aes(x = Var1, y = Var2, fill = Freq)) +
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Categorical Encoding
+# Displaying ocean proximity categories
+table(df_clean$ocean_proximity)
+
+#Converting ocean proximity into dummy variables
+ocean_encoded <- model.matrix(
+  ~ ocean_proximity - 1,
+  data = df_clean
+)
+
+#Viewing the first six rows
+head(ocean_encoded)
+
+#Removing original categorical column
+df_numeric <- df_clean[, names(df_clean) != "ocean_proximity"]
+
+#Adding encoded columns
+df_encoded <- cbind(df_numeric, ocean_encoded)
+
+dim(df_encoded)
+names(df_encoded)
+
+#Checking remaining missing values
+sum(is.na(df_encoded))
+
+#data scaling and PCA
+#Standardising numerical variables
+df_scaled <- scale(df_encoded)
+
+
+head(df_scaled)
+dim(df_scaled)
+
+#Performing Principal Component Analysis
+pca_result <- prcomp(df_scaled, center = FALSE, scale. = FALSE)
+
+summary(pca_result)
+
+#PCA Scree Plot
+
+#Calculating explained variance
+variance <- pca_result$sdev^2
+
+variance_percentage <- variance / sum(variance) * 100
+
+#Creating scree plot
+plot(
+  variance_percentage,
+  type = "b",
+  pch = 19,
+  col = "blue",
+  main = "PCA Scree Plot",
+  xlab = "Principal Components",
+  ylab = "Variance Explained (%)"
+)
+
+#PCA Scatter Plot
+
+plot(
+  pca_result$x[, 1],
+  pca_result$x[, 2],
+  col = "blue",
+  pch = 16,
+  cex = 0.3,
+  main = "PCA: First Two Principal Components",
+  xlab = "PC1",
+  ylab = "PC2"
+)
