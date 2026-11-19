@@ -162,3 +162,44 @@ ggplot(df_clean, aes(x = median_income,
     y = "Median House Value ($)"
   ) +
   theme_minimal()
+
+#House Prices by Ocean Proximity
+
+ggplot(df_clean, aes(x = ocean_proximity,
+                     y = median_house_value)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(
+    title = "House Prices by Ocean Proximity",
+    x = "Ocean Proximity",
+    y = "Median House Value ($)"
+  ) +
+  theme_minimal()
+
+#Correlation Heatmap
+
+# Selecting numerical columns
+numeric_data <- df_clean[sapply(df_clean, is.numeric)]
+
+# Calculating correlation matrix
+cor_matrix <- cor(numeric_data)
+
+# Converting matrix into a data frame
+cor_data <- as.data.frame(as.table(cor_matrix))
+
+# Creating heatmap
+ggplot(cor_data, aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile() +
+  scale_fill_gradient2(
+    low = "blue",
+    mid = "white",
+    high = "red",
+    midpoint = 0
+  ) +
+  labs(
+    title = "Correlation Heatmap of Housing Variables",
+    x = "",
+    y = "",
+    fill = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
