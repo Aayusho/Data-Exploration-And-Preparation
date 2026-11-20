@@ -34,6 +34,7 @@ sum(sapply(df,function(x) {
 table(df$ocean_proximity)
 
 #handling missing values
+#the total_Bedrooms columns contains missing values.
 
 #percentage of missing bedrooms
 missing_percentage <- sum(is.na(df$total_bedrooms)) / nrow(df) * 100
@@ -100,17 +101,6 @@ count_outliers(df_clean$median_house_value)
 count_outliers(df_clean$median_income)
 count_outliers(df_clean$population)
 
-# Function to count outliers
-count_outliers <- function(x) {
-  Q1 <- quantile(x, 0.25, na.rm = TRUE)
-  Q3 <- quantile(x, 0.75, na.rm = TRUE)
-  IQR_value <- IQR(x, na.rm = TRUE)
-  
-  lower <- Q1 - 1.5 * IQR_value
-  upper <- Q3 + 1.5 * IQR_value
-  
-  sum(x < lower | x > upper, na.rm = TRUE)
-}
 
 # Creating outlier results table
 outlier_results <- data.frame(
@@ -142,7 +132,10 @@ sum(is.na(df_clean))
 #Exploratory Data analysis
 library(ggplot2)
 
-#distribution of house prices
+#distribution of house prices - histogram
+#This histogram shows the distribution of median house values.
+#most housing districts have values in the lower and middle ranges.
+#the concentration near $500000 reflects the datasets price cap.
 ggplot(df_clean, aes(x = median_house_value)) +
   geom_histogram(bins = 30, fill = "skyblue", color = "black") +
   labs(
@@ -152,7 +145,10 @@ ggplot(df_clean, aes(x = median_house_value)) +
   ) +
   theme_minimal()
 
-#median income vs house prices
+#median income vs house prices - scatter plot
+#This scatter plot compares median income with median house value.
+#It shows a generally positive relationship between income and house prices with also some variation present.
+#Higher-income districts tend to have higher house values.
 ggplot(df_clean, aes(x = median_income,
                      y = median_house_value)) +
   geom_point(alpha = 0.3, color = "blue") +
@@ -163,8 +159,10 @@ ggplot(df_clean, aes(x = median_income,
   ) +
   theme_minimal()
 
-#House Prices by Ocean Proximity
-
+#House Prices by Ocean Proximity - boxplot
+#This boxplot compares house values across ocean proximity categories.
+#It helps identify differences in median prices and price variation.
+#it also highlights potential outliers within each category.
 ggplot(df_clean, aes(x = ocean_proximity,
                      y = median_house_value)) +
   geom_boxplot(fill = "lightgreen") +
@@ -187,6 +185,9 @@ cor_matrix <- cor(numeric_data)
 cor_data <- as.data.frame(as.table(cor_matrix))
 
 # Creating heatmap
+#this heatmap shows correlations between numerical variables.
+#it helps identify variables that have strong positive or negative relationships.
+#these relationships are useful when interpreting the PCA results.
 ggplot(cor_data, aes(x = Var1, y = Var2, fill = Freq)) +
   geom_tile() +
   scale_fill_gradient2(
@@ -250,6 +251,8 @@ variance <- pca_result$sdev^2
 variance_percentage <- variance / sum(variance) * 100
 
 #Creating scree plot
+#this scree plot shows the percentage of variance explained by each principal component.
+#the first six components explain approx. 86.98% of the total variance.
 plot(
   variance_percentage,
   type = "b",
@@ -261,7 +264,10 @@ plot(
 )
 
 #PCA Scatter Plot
-
+#this plot displays the housing observations using PC1 and PC2.
+#PC1 mainly represents housing and population size.
+#PC2 mainly represnets geographical location.
+#The plot helps visualise patterns in the reduced dataset.
 plot(
   pca_result$x[, 1],
   pca_result$x[, 2],
@@ -277,9 +283,6 @@ plot(
 cumulative_variance <- cumsum(variance_percentage)
 
 print(cumulative_variance)
-which(cumulative_variance >= 80)[1]
-
-summary(pca_result)
 which(cumulative_variance >= 80)[1]
 
 #PCA Interpretation
@@ -320,3 +323,12 @@ df_pca <- as.data.frame(
 
 #Checking reduced dataset dimensions
 dim(df_pca)
+
+#Final PCA conclusion
+#The original encoded dataset contained 14 numerical variables.
+#PCA reduced these to six principal components.
+#these six components retained approx. 86.98% of the total variance.
+#PC1 was mainly influenced by households,total bedrooms,total rooms and population.
+#PC2 was mainly influenced by latitude,longitude and ocean proximity.
+#therefore PCA reduced the number of variables while preserving most of the information in the dataset.
+
