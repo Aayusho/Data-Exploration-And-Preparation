@@ -33,6 +33,28 @@ sum(sapply(df,function(x) {
 #checking categories
 table(df$ocean_proximity)
 
+#Dataset summary table
+dataset_summary <- data.frame(
+  Description = c(
+    "Original Rows",
+    "Original Columns",
+    "Missing Values Before Cleaning",
+    "Missing Values After Cleaning",
+    "Cleaned Rows",
+    "Cleaned Columns"
+  ),
+  Value = c(
+    nrow(df),
+    ncol(df),
+    sum(is.na(df)),
+    sum(is.na(df_clean)),
+    nrow(df_clean),
+    ncol(df_clean)
+  )
+)
+
+print(dataset_summary)
+
 #handling missing values
 #the total_Bedrooms columns contains missing values.
 
@@ -311,6 +333,15 @@ components_needed <- which(cumulative_variance >= 80)[1]
 
 #Total variance retained
 variance_retained <- cumulative_variance[components_needed]
+
+#PCA Explained Variance Summary Table
+pca_summary <- data.frame(
+  Component = paste0("PC", seq_along(variance_percentage)),
+  Variance_Explained = round(variance_percentage, 2),
+  Cumulative_Variance = round(cumulative_variance, 2)
+)
+
+print(pca_summary)
 
 #Displaying final results
 cat("Components retained:", components_needed, "\n")
