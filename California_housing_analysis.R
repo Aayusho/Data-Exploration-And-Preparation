@@ -33,6 +33,26 @@ sum(sapply(df,function(x) {
 #checking categories
 table(df$ocean_proximity)
 
+#handling missing values
+#the total_Bedrooms columns contains missing values.
+
+#percentage of missing bedrooms
+missing_percentage <- sum(is.na(df$total_bedrooms)) / nrow(df) * 100
+
+missing_percentage
+
+#copy for cleaning
+df_clean <- df
+
+# Calculating median of bedrooms
+median_bedrooms <- median(df_clean$total_bedrooms, na.rm = TRUE)
+
+# Replacing missing values with the median
+df_clean$total_bedrooms[is.na(df_clean$total_bedrooms)] <- median_bedrooms
+
+# Checking remaining missing values
+sum(is.na(df_clean))
+
 #Dataset summary table
 dataset_summary <- data.frame(
   Description = c(
@@ -54,26 +74,6 @@ dataset_summary <- data.frame(
 )
 
 print(dataset_summary)
-
-#handling missing values
-#the total_Bedrooms columns contains missing values.
-
-#percentage of missing bedrooms
-missing_percentage <- sum(is.na(df$total_bedrooms)) / nrow(df) * 100
-
-missing_percentage
-
-#copy for cleaning
-df_clean <- df
-
-# Calculating median of bedrooms
-median_bedrooms <- median(df_clean$total_bedrooms, na.rm = TRUE)
-
-# Replacing missing values with the median
-df_clean$total_bedrooms[is.na(df_clean$total_bedrooms)] <- median_bedrooms
-
-# Checking remaining missing values
-sum(is.na(df_clean))
 
 # Checking dataset dimensions
 dim(df_clean)
